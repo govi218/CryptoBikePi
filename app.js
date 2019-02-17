@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const azure = req
+const azure = require('azure');
+const fs = require('fs');
 
 /** Init **/
 
@@ -33,8 +34,19 @@ app.post('/state_change', (req, res) => {
   }
   console.log('State changed:');
   console.log(req.body);
+
+  fs.writeFile("./state_changes.txt", JSON.stringify(req.body), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+  }); 
   res.status(200);
 });
+
+app.get('/change_history', (req, res) => {
+  res.sendFile('./state_changes.txt');
+})
 
 /* Server Config */
 app.listen(port, () => {
